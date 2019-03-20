@@ -6,7 +6,7 @@ from classifiers.logistic_regression import LogisticRegression
 
 
 classifier_params = {"svm": ["_lambda"],
-                     "l_regression":  []
+                     "lregression":  ["_lambda"]
                      }
 
 
@@ -14,7 +14,7 @@ class Classifier:
     def __init__(self, classifier, kernel_params=None):
         if classifier == "svm":
             self.cls = KernelSVM(**kernel_params)
-        elif classifier == "l_regression":
+        elif classifier == "lregression":
             self.cls = LogisticRegression(**kernel_params)
 
     def fit(self, K_train, y):

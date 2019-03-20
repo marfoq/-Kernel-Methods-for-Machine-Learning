@@ -28,7 +28,7 @@ def main():
     parser.add_argument("-k", "--kernel", help="Choosen kernel",
                         type=str, default="gaussian", choices=["gaussian"])
     parser.add_argument("-c", "--classifier", help="Choosen classifier",
-                        type=str, default="svm", choices=["svm"])
+                        type=str, default="svm", choices=["svm", "lregression"])
     args = parser.parse_args()
 
     k_params, clf_params = additional_params(args)
