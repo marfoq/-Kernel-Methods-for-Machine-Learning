@@ -1,10 +1,11 @@
 # stdlib
 import argparse
+from time import time
 # 3p
 import numpy as np
 import pandas as pd
 # project
-from kernels.kernels import Kernel, kernel_params
+from kernels.kernel import Kernel, kernel_params
 from classifiers.classifier import Classifier, classifier_params
 from utils import is_result_saved, save_result, get_result
 
@@ -26,7 +27,7 @@ def main():
     parser = argparse.ArgumentParser(
         description="Train and predict using a selected classifier and a kernel")
     parser.add_argument("-k", "--kernel", help="Choosen kernel",
-                        type=str, default="gaussian", choices=["gaussian"])
+                        type=str, default="gaussian", choices=["gaussian", "spectrum"])
     parser.add_argument("-c", "--classifier", help="Choosen classifier",
                         type=str, default="svm", choices=["svm", "lregression"])
     args = parser.parse_args()
@@ -47,10 +48,12 @@ def main():
         matrices = get_result(filename)
         print("Done!")
     else:
+        since = time()
         data = get_result("provided_data.pkl")
         print("Computing needed matrices ...")
         matrices = kernel.compute_nedeed_matrices(data)
         print("Done!")
+        print("Took {}s".format(int(time() - since)))
         save_result(filename, matrices)
 
     predictions = ((),)
@@ -58,8 +61,8 @@ def main():
         print("Training model for dataset {} ...".format(i))
         clf = Classifier(args.classifier, clf_params)
         clf.fit(matrices["Ktr{}".format(i)], matrices["Ytr{}".format(i)])
-        print("\tAccuracy:", clf.evaluate(
-            matrices["Kval{}".format(i)], matrices["Yval{}".format(i)]))
+        print("\tAccuracy: {} %".format(round(clf.evaluate(
+            matrices["Kval{}".format(i)], matrices["Yval{}".format(i)]) * 100, 2)))
         predictions += (clf.predict(matrices["Kte{}".format(i)]),)
 
     print("Saving predictions ...")
